@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Pong!!!</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-touch-fullscreen" content="yes">
+    <link href="images/icon-114x114.png" sizes="114x114" rel="apple-touch-icon">
+    <script src="https://code.jquery.com/jquery-1.11.3.min.js"></script>
+    <link href="css/style.css" rel="stylesheet">
+    
+    
+    
+    <style>
+      button { width:200px; height:200px; color:white;}
+    </style>
+  </head>
+  
+  <body>
+    <div id="startscreen">
+    <div style="width:100%;text-align:center;">
+    <button style="background-color:red; " id="red">Red</button>
+ <BR>OR<BR>
+    <button style="background-color:blue;" id="blue">Blue</button>
+     </div>
+    </div>
+    <div id="waiting" style="display:none;">
+    <div style="width:100%; height:200px;">
+      
+      You are <span id="colorchoice">red</span>
+      Waiting for other players...
+    
+    </div>
+    </div>
+    <div id="playing" style="display:none;">
+    <button style="background-color:gray;" id="up"> UP </button>
+    <BR>
+    <button style="background-color:gray;" id="down">DOWN</button>
+      
+    </div>
+  </body>
+  
+  
+      <script>
+      var move={}
+      var uuid = guid();
+      var color="";
+      var host = location.origin.replace(/^http/, 'ws')
+      var ws = new WebSocket(host);
+      ws.onmessage = function (event) {
+        move = JSON.parse(event.data);
+        console.dir(move);
+        switch (move.cmd)
+        {
+          case "startGameEveryone":
+            $('#waiting').hide();
+            $('#playing').show();
+        }
+        
+      };
+
+        //start
+        $('#red').on("click",function(){
+          move={cmd:"start",color:"red","uuid":uuid};
+          $('#colorchoice').html("RED");
+          color="red";
+          $('#startscreen').hide();
+          $('#waiting').show();
+          ws.send(JSON.stringify(move));
+        });
+        $('#blue').on("click",function(){
+          move={cmd:"start",color:"blue","uuid":uuid};
+          color="blue";
+          $('#colorchoice').html("BLUE");
+          $('#startscreen').hide();
+          $('#waiting').show();
+           ws.send(JSON.stringify(move));
+        });
+        
+        
+        //move
+        $('#up').on("click",function(){
+          move={cmd:"up","color":color,"uuid":uuid};
+          ws.send(JSON.stringify(move));
+        });
+        $('#down').on("click",function(){
+          move={cmd:"down","color":color,"uuid":uuid};
+          ws.send(JSON.stringify(move));
+        });
+      
+      function guid() {
+          var d = new Date().getTime();
+          var uuid = 'xxxxxxxxxxxx4xxxyxxxxxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+              var r = (d + Math.random()*16)%16 | 0;
+              d = Math.floor(d/16);
+              return (c=='x' ? r : (r&0x3|0x8)).toString(16);
+          });
+          return uuid;
+      };
+      
+    </script>
+    
+  </html>
