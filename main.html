@@ -129,15 +129,19 @@
       var ws = new WebSocket(host);
       ws.onmessage = function (event) {
         var move = JSON.parse(event.data);
-        console.log(move.color);
+        //console.log(move.color);
         switch(move.cmd)
         {
           case "down": 
                   if (move.color=="red")
                     {
-                      p1y +=15;
+                      console.log(" move.color"+ move.uuid);
+                       p1y = move.uuid-ph/2;
+                      //p1y +=15;
                     } else {
-                      p2y +=15;
+                      //p2y +=15;
+                       p2y =  move.uuid-ph/2;
+                       console.log(" move.color"+ move.uuid);
                     }
                     
                   break;
